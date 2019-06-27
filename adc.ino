@@ -86,28 +86,12 @@ void loop()
 }
 
 /*
-    Interrupt handlers
+    Interrupt handlers! Every sample complete will hook this function!
 */
 static void DMA1_CH1_isr() {
   if(count == 999)
   {
     count = 0;
-    for(int a= 0; a< 1000; a++)
-    {
-      res = res + buf_a0[a] * buf_a1[a];
-    }
-    res = res / 1000;
-    for(int a= 0; a< 1000; a++)
-    {
-      res = res + buf_a0[a] * buf_a0[a];
-    }
-    res = sqrt(res);
-    for(int a= 0; a< 1000; a++)
-    {
-      res = res + buf_a1[a] * buf_a1[a];
-    }
-    res = sqrt(res);
-    
   }
   buf_a0[count] = adc_buffer[0];
   buf_a1[count] = adc_buffer[1];
@@ -137,9 +121,7 @@ void set_adc(adc_dev* dev)
 
 void set_adc_channels(adc_dev* dev, const uint8_t* pins, const uint8_t num_pins)
 {
-  /*
-   * From libraries/STM32ADC/src/utility/util_adc.c
-   */
+  
   uint8_t channels[num_pins];
   uint32_t records[3] = {0,0,0};
 
@@ -200,8 +182,8 @@ void set_timer(HardwareTimer* timer, voidFuncPtr func)
   timer->setOverflow(65535);
   
   timer->setMode(TIMER_CH1, TIMER_OUTPUT_COMPARE);
-  timer->setCompare(TIMER_CH1, 1);  // initial compare value for the timer
-  next_sample_time = 1;             // sync next_sample_time with the compare value
+  timer->setCompare(TIMER_CH1, 1);  
+  next_sample_time = 1;             
 
   if (func != NULL)
   {
